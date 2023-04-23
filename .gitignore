@@ -5,4 +5,5 @@ exp_4_3_fast_style_transfer_train/submit_4_3.zip
 exp_4_4_custom_tensorflow_op/submit_4_4.zip
 exp_4_4_custom_tensorflow_op/udnie_power_diff_numpy.pb
 exp_4_4_custom_tensorflow_op/udnie_power_diff.pb
-exp_6_DLP_design/data/*.txt
+exp_6_DLP_design/data/*
+exp_6_DLP_design/sim/*
