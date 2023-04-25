@@ -30,6 +30,8 @@ if(!rst_n) begin
   psum_r <= 32'h0;
 end else if(vld_i) begin
   psum_r <= psum_d;
+end else begin
+  psum_r <= 32'h0;
 end
 
 always@(posedge clk or negedge rst_n)

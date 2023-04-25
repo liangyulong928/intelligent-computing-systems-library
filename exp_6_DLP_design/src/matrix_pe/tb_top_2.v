@@ -62,7 +62,7 @@ end
 always@(posedge clk or negedge rst_n) begin
   if(!rst_n) begin
     weight_addr <= 16'h0;
-  end else if(wram_mpe_weight_valid && wram_mpe_weight_ready) begin
+  end else if(wram_mpe_weight_valid && !wram_mpe_weight_ready) begin
     weight_addr <= weight_addr + 1'b1;
   end
 end
@@ -70,28 +70,37 @@ end
 always@(posedge clk or negedge rst_n) begin
   if(!rst_n) begin
     neuron_addr <= 16'h0;
-  end else if(nram_mpe_neuron_valid && nram_mpe_neuron_ready) begin
+  end else if(nram_mpe_neuron_valid && !nram_mpe_neuron_ready) begin
     neuron_addr <= neuron_addr + 1'b1;
   end
 end
+
+reg statue;
 
 always@(posedge clk or negedge rst_n) begin
   if(!rst_n) begin
     ib_ctl_uop_valid <= 1'b0;
   end else if(ib_ctl_uop_valid && ib_ctl_uop_ready) begin
+    if (inst_addr != 2'h3) begin
+      ib_ctl_uop_valid <= 1'b0;
+    end else if (statue) begin
+      ib_ctl_uop_valid <= 1'b1;
+    end else begin
+      statue <= 1'b1;
+      ib_ctl_uop_valid <= 1'b0;
+    end
+  end else begin
     ib_ctl_uop_valid <= 1'b1;
-  end else if(!ib_ctl_uop_valid) begin
-    ib_ctl_uop_valid <= 1'b0;
-  end
+  end 
 end
 
 always@(posedge clk or negedge rst_n) begin
   if(!rst_n) begin
     wram_mpe_weight_valid <= 1'b0;
   end else if(wram_mpe_weight_valid && wram_mpe_weight_ready) begin
-    wram_mpe_weight_valid <= 1'b1;
-  end else if(!wram_mpe_weight_valid) begin
     wram_mpe_weight_valid <= 1'b0;
+  end else begin
+    wram_mpe_weight_valid <= 1'b1;
   end
 end
 
@@ -99,9 +108,9 @@ always@(posedge clk or negedge rst_n) begin
   if(!rst_n) begin
     nram_mpe_neuron_valid <= 1'b0;
   end else if(nram_mpe_neuron_valid && nram_mpe_neuron_ready) begin
-    nram_mpe_neuron_valid <= 1'b1;
-  end else if(!nram_mpe_neuron_valid) begin
     nram_mpe_neuron_valid <= 1'b0;
+  end else begin
+    nram_mpe_neuron_valid <= 1'b1;
   end
 end
 
@@ -141,10 +150,12 @@ always@(posedge clk or negedge rst_n) begin
   if(!rst_n) begin
     compare_pass <= 1'b1;
   end else if(pe_vld_o && (pe_result != result[result_addr][31:0])) begin
-    $display("FAIL: num.%d result not correct!!!", result_addr);
+    // $display("FAIL: num.%d result not correct!!!", result_addr);
+    $display("FAIL:\n num.%d result not correct!!!\npe_result is %x,result is %x\n", result_addr,pe_result,result[result_addr][31:0]);
     compare_pass <= 1'b0;
   end else if(pe_vld_o && (pe_result == result[result_addr][31:0])) begin
-    $display("INFO: num.%d result is correct.", result_addr);
+    // $display("INFO: num.%d result is correct.", result_addr);
+    $display("INFO:\n num.%d result is correct!!!\npe_result is %x,result is %x\n", result_addr,pe_result,result[result_addr][31:0]);
   end
 end
 
