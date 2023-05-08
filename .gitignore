@@ -8,3 +8,6 @@ exp_4_4_custom_tensorflow_op/udnie_power_diff.pb
 exp_6_DLP_design/data/*
 exp_6_DLP_design/sim/*
 exp_6_DLP_design/智能计算系统.docx
+*.zip
+*/tensorflow_mlu-1.14.0-cp27-cp27mu-linux_x86_64.whl
+*/libcnplugin.so
